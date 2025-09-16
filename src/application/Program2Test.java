@@ -25,9 +25,13 @@ public class Program2Test {
         System.out.println("Update completed");
 
         System.out.println("\n=== TEST4 DELETE DEPARTMENT ===");
-        departmentDao.deleteById(8);
+        departmentDao.deleteById(11);
         System.out.println("Delete completed");
 
+        System.out.println("\n=== TEST5 FIND ALL DEPARTMENTS ===");
+        for (Department obj : departmentDao.findAll()) {
+            System.out.println(obj);
+        }
     }
 }
 

@@ -36,11 +36,9 @@ public class DepartmentDaoJDBC implements DepartmentDao {
             } else {
                 throw new DbException("Unexpected error, No rows affected!");
             }
-        }
-        catch (SQLException e) {
+        } catch (SQLException e) {
             throw new DbException(e.getMessage());
-        }
-        finally {
+        } finally {
             DB.closeStatement(st);
         }
     }
@@ -63,11 +61,9 @@ public class DepartmentDaoJDBC implements DepartmentDao {
             if (rowsAffected == 0) {
                 throw new DbException("No rows affected!");
             }
-        }
-        catch (SQLException e) {
+        } catch (SQLException e) {
             throw new DbException(e.getMessage());
-        }
-        finally {
+        } finally {
             DB.closeStatement(st);
         }
     }
@@ -83,11 +79,9 @@ public class DepartmentDaoJDBC implements DepartmentDao {
             if (rowsAffected == 0) {
                 throw new DbException("No rows affected, delete failed.");
             }
-        }
-        catch (SQLException e) {
+        } catch (SQLException e) {
             throw new DbException(e.getMessage());
-        }
-        finally {
+        } finally {
             DB.closeStatement(st);
         }
     }
@@ -98,7 +92,8 @@ public class DepartmentDaoJDBC implements DepartmentDao {
         ResultSet rs = null;
         try {
             st = conn.prepareStatement(
-                    "SELECT * FROM department WHERE Id = ?");
+                    "SELECT * FROM department WHERE Id = ?",
+                    Statement.RETURN_GENERATED_KEYS);
             st.setInt(1, id);
             rs = st.executeQuery();
             if (rs.next()) {
@@ -108,6 +103,30 @@ public class DepartmentDaoJDBC implements DepartmentDao {
                 return dep;
             }
             return null;
+        } catch (SQLException e) {
+            throw new DbException(e.getMessage());
+        } finally {
+            DB.closeResultSet(rs);
+            DB.closeStatement(st);
+        }
+    }
+
+    @Override
+    public List<Department> findAll() {
+        PreparedStatement st = null;
+        ResultSet rs = null;
+        try {
+            st = conn.prepareStatement(
+                    "SELECT * FROM department ORDER BY Name");
+            rs = st.executeQuery();
+            List<Department> list = new java.util.ArrayList<>();
+            while (rs.next()) {
+                Department dep = new Department();
+                dep.setId(rs.getInt("Id"));
+                dep.setName(rs.getString("Name"));
+                list.add(dep);
+            }
+            return list;
         }
         catch (SQLException e) {
             throw new DbException(e.getMessage());
@@ -116,10 +135,5 @@ public class DepartmentDaoJDBC implements DepartmentDao {
             DB.closeResultSet(rs);
             DB.closeStatement(st);
         }
-    }
-
-    @Override
-    public List<Department> findAll() {
-        return List.of();
     }
 }
