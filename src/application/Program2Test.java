@@ -19,6 +19,11 @@ public class Program2Test {
         Department department = departmentDao.findById(1);
         System.out.println(department);
 
+        System.out.println("\n=== TEST3 UPDATE DEPARTMENT ===");
+        department.setName("Food");
+        departmentDao.update(department);
+        System.out.println("Update completed");
+
     }
 }
 
